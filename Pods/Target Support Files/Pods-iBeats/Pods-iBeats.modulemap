@@ -1,0 +1,6 @@
+framework module Pods_iBeats {
+  umbrella header "Pods-iBeats-umbrella.h"
+
+  export *
+  module * { export * }
+}
