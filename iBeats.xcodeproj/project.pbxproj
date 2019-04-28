@@ -263,7 +263,7 @@
 				8BA275CF2179CBE1006E39DC /* Sources */,
 				8BA275D02179CBE1006E39DC /* Frameworks */,
 				8BA275D12179CBE1006E39DC /* Resources */,
-				3FBC7FB94E6FE6ED203137E4 /* [CP] Embed Pods Frameworks */,
+				B6A194B0BFF38936B6232E7E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -321,7 +321,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3FBC7FB94E6FE6ED203137E4 /* [CP] Embed Pods Frameworks */ = {
+		B6A194B0BFF38936B6232E7E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -329,7 +329,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-iBeats/Pods-iBeats-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-iBeats/Pods-iBeats-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/AlamofireImage/AlamofireImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
@@ -344,7 +344,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iBeats/Pods-iBeats-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iBeats/Pods-iBeats-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F084B67BE992A1CB6C4C850B /* [CP] Check Pods Manifest.lock */ = {
