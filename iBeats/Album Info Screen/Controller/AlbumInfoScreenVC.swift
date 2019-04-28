@@ -19,7 +19,7 @@ private enum AlbumInfoScreenConstants: Int {
     case trackCellHeight = 80
 }
 
-class AlbumInfoScreenVC: UIViewController, AlbumInfoScreenNotification {
+class AlbumInfoScreenVC: UIViewController {
     
     var albumDetail: AlbumDetail?
     var isFromSearch: Bool?
@@ -76,7 +76,11 @@ class AlbumInfoScreenVC: UIViewController, AlbumInfoScreenNotification {
         artistName.text = "Artist Name: \(albumDetail?.artist ?? "")"
         
         albumInfoVM = AlbumInfoScreenViewModel()
-        albumInfoVM?.delegate = self
+        
+        albumInfoVM?.albumInfos.notify(notifier: { [weak self] (info) in
+            
+            self?.updateScreen()
+        })
         
         // Search tracks for the album
         if isAlreadySavedAlbum {
@@ -107,7 +111,7 @@ class AlbumInfoScreenVC: UIViewController, AlbumInfoScreenNotification {
             iBDatabaseOperations.deleteAlbumWith(albumInfo: albumDetail!)
         }
         else {
-            let track = albumInfoVM?.albumInfos?.album?.tracks?.track
+            let track = albumInfoVM?.albumInfos.value?.album?.tracks?.track
             iBDatabaseOperations.insertDatasInDBWith(albumInfo: albumDetail!, withTracks: track, isFromSearch: isFromSearch!)
         }
     }
@@ -127,7 +131,7 @@ extension AlbumInfoScreenVC: UITableViewDelegate, UITableViewDataSource {
             let trackFullDetail = iBDatabaseOperations.fetchSingleAlbumWith(albumInfo: albumDetail!)
             trackCount = trackFullDetail?.tracks?.count ?? 0
         } else {
-            trackCount = albumInfoVM?.albumInfos?.album?.tracks?.track?.count ?? 0
+            trackCount = albumInfoVM?.albumInfos.value?.album?.tracks?.track?.count ?? 0
         }
 
         return trackCount!
@@ -158,7 +162,7 @@ extension AlbumInfoScreenVC: UITableViewDelegate, UITableViewDataSource {
             cell.loadData(trackInfo: trackInfo)
         }
         else {
-            let trackInfo = albumInfoVM?.albumInfos?.album?.tracks?.track?[indexPath.row]
+            let trackInfo = albumInfoVM?.albumInfos.value?.album?.tracks?.track?[indexPath.row]
             cell.loadData(trackInfo: trackInfo!)
         }
         
