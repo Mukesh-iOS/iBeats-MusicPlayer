@@ -8,16 +8,10 @@
 
 import UIKit
 
-protocol HomeScreenNotification: class {
-    
-    func updateScreen()
-}
-
 class HomeScreenViewModel: NSObject {
-
-    var albumDetails: AlbumSearchModel?
-    var delegate: HomeScreenNotification?
-        
+    
+    var albumDetails: Variable<AlbumSearchModel> = Variable<AlbumSearchModel>()
+    
     func searchAlbum(name: String) {
         
         let params = NSMutableDictionary()
@@ -32,8 +26,7 @@ class HomeScreenViewModel: NSObject {
             guard let album = album as? AlbumSearchModel, let strongSelf = self else {
                 return
             }
-            strongSelf.albumDetails = album
-            strongSelf.delegate?.updateScreen()
+            strongSelf.albumDetails.value = album
         }
     }
 }

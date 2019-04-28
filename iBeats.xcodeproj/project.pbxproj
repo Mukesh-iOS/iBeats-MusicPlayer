@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B34D2062275AD5000512DA3 /* Variable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B34D2052275AD5000512DA3 /* Variable.swift */; };
 		8BA275D72179CBE1006E39DC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA275D62179CBE1006E39DC /* AppDelegate.swift */; };
 		8BA275DC2179CBE1006E39DC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8BA275DA2179CBE1006E39DC /* Main.storyboard */; };
 		8BA275DF2179CBE1006E39DC /* iBeats.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8BA275DD2179CBE1006E39DC /* iBeats.xcdatamodeld */; };
@@ -31,6 +32,7 @@
 
 /* Begin PBXFileReference section */
 		41FBC349C9F1331D4AFE5B82 /* Pods_iBeats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iBeats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B34D2052275AD5000512DA3 /* Variable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Variable.swift; sourceTree = "<group>"; };
 		8BA275D32179CBE1006E39DC /* iBeats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iBeats.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BA275D62179CBE1006E39DC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8BA275DB2179CBE1006E39DC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			children = (
 				8BA276022179E0E6006E39DC /* WebRequest.swift */,
 				8BA2760E217A07C3006E39DC /* iBServiceURL.swift */,
+				8B34D2052275AD5000512DA3 /* Variable.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -126,7 +129,6 @@
 		8BA276052179EF3F006E39DC /* Home Screen */ = {
 			isa = PBXGroup;
 			children = (
-				D057AC04217CF1D30041D13D /* Controller */,
 				D057AC05217CF2120041D13D /* ViewModel */,
 				8BDF76D4217C512A00E119B2 /* View */,
 				D057AC06217CF24B0041D13D /* Model */,
@@ -137,7 +139,6 @@
 		8BA27610217A16F6006E39DC /* List Screen */ = {
 			isa = PBXGroup;
 			children = (
-				8BEABD1C217E210800544474 /* Controller */,
 				8BA27613217A247B006E39DC /* View */,
 			);
 			path = "List Screen";
@@ -146,6 +147,7 @@
 		8BA27613217A247B006E39DC /* View */ = {
 			isa = PBXGroup;
 			children = (
+				8BA27611217A1FB0006E39DC /* ListScreenVC.swift */,
 				8BA27614217A2498006E39DC /* ListCell.swift */,
 			);
 			path = View;
@@ -173,17 +175,10 @@
 		8BDF76D4217C512A00E119B2 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				8BA2760A2179EFA2006E39DC /* HomeScreenVC.swift */,
 				8BDF76D0217C47CB00E119B2 /* HomeScreenCell.swift */,
 			);
 			path = View;
-			sourceTree = "<group>";
-		};
-		8BEABD1C217E210800544474 /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				8BA27611217A1FB0006E39DC /* ListScreenVC.swift */,
-			);
-			path = Controller;
 			sourceTree = "<group>";
 		};
 		8BEABD1D217E255000544474 /* Controller */ = {
@@ -226,14 +221,6 @@
 				AE4A355D64E97CA358EB3E16 /* Pods_iBeatsTests.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		D057AC04217CF1D30041D13D /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				8BA2760A2179EFA2006E39DC /* HomeScreenVC.swift */,
-			);
-			path = Controller;
 			sourceTree = "<group>";
 		};
 		D057AC05217CF2120041D13D /* ViewModel */ = {
@@ -382,6 +369,7 @@
 				8BA30C85217B0D7900DD1ED4 /* AlbumInfoScreenModel.swift in Sources */,
 				8BA276092179EF84006E39DC /* HomeScreenViewModel.swift in Sources */,
 				8BA275FB2179CC51006E39DC /* iBDatabaseManager.swift in Sources */,
+				8B34D2062275AD5000512DA3 /* Variable.swift in Sources */,
 				8BA30C81217B08B900DD1ED4 /* AlbumInfoCell.swift in Sources */,
 				8BA27615217A2498006E39DC /* ListCell.swift in Sources */,
 				8BA2760F217A07C3006E39DC /* iBServiceURL.swift in Sources */,

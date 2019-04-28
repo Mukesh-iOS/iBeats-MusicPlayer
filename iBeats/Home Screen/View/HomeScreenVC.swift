@@ -16,7 +16,7 @@ private enum HomeScreenStrings: String {
     case albumInfoScreenIdentifier = "AlbumInfoScreenVC"
 }
 
-class HomeScreenVC: UIViewController, HomeScreenNotification {
+class HomeScreenVC: UIViewController {
     
     private var homeScreenVM: HomeScreenViewModel?
     private var albumInfo: [AlbumInfo]?
@@ -44,7 +44,10 @@ class HomeScreenVC: UIViewController, HomeScreenNotification {
     private func viewSetup() {
         
         homeScreenVM = HomeScreenViewModel()
-        homeScreenVM?.delegate = self
+        homeScreenVM?.albumDetails.notify(notifier: { [weak self] (info) in
+            
+            self?.updateScreen()
+        })
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
@@ -56,7 +59,7 @@ class HomeScreenVC: UIViewController, HomeScreenNotification {
     func updateScreen() {
         
         let listScreenVC = storyboard?.instantiateViewController(withIdentifier: HomeScreenStrings.listScreenIdentifier.rawValue) as! ListScreenVC
-        listScreenVC.albumDetails = homeScreenVM?.albumDetails
+        listScreenVC.albumDetails = homeScreenVM?.albumDetails.value
 
         self.navigationController?.pushViewController(listScreenVC, animated: true)
     }
