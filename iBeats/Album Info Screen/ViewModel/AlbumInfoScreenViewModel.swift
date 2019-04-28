@@ -15,8 +15,7 @@ protocol AlbumInfoScreenNotification: class {
 
 class AlbumInfoScreenViewModel: NSObject {
     
-    var albumInfos: AlbumInfoModel?
-    var delegate: AlbumInfoScreenNotification?
+    var albumInfos: Variable<AlbumInfoModel> = Variable<AlbumInfoModel>()
     
     func searchAlbumInfo(album: String, artist: String) {
         
@@ -33,8 +32,7 @@ class AlbumInfoScreenViewModel: NSObject {
             
             if let strongSelf = self, let album = albumInfo as? AlbumInfoModel {
                 
-                strongSelf.albumInfos = album
-                strongSelf.delegate?.updateScreen()
+                strongSelf.albumInfos.value = album
             }
         }
    }
