@@ -44,4 +44,9 @@ class HomeScreenViewModel: NSObject {
         
         return albums?[index]
     }
+    
+    func deleteAlbum(withAlbumDetail album: AlbumDetail) {
+        
+        iBDatabaseOperations.deleteAlbumWith(albumInfo: album)
+    }
 }

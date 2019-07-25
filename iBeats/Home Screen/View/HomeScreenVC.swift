@@ -17,7 +17,6 @@ private enum HomeScreenStrings: String {
 class HomeScreenVC: UIViewController {
     
     private var homeScreenVM: HomeScreenViewModel?
-    private var albumInfo: [AlbumInfo]?
     private static let homeScreenCell = "HomeScreenCell"
     
     @IBOutlet weak var albumCollection: UICollectionView!
@@ -77,7 +76,8 @@ class HomeScreenVC: UIViewController {
         if homeScreenVM?.getAlbumInfoCount() ?? 0 > 0, let albumDetails = homeScreenVM?.getAlbumLInfo(withIndex: sender.tag) {
             
             let detail = AlbumDetail.init(name: albumDetails.albumName, artist: albumDetails.artistName, url: nil, image: nil)
-            iBDatabaseOperations.deleteAlbumWith(albumInfo: detail)
+            
+            homeScreenVM?.deleteAlbum(withAlbumDetail: detail)
             
             homeScreenVM?.getAlbumInfoCount() ?? 0 > 0 ? albumCollection.restore() : albumCollection.setEmptyMessage(HomeScreenStrings.noAlbumAvailable.rawValue)
             albumCollection.reloadData()
