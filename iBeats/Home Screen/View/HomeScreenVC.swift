@@ -10,16 +10,15 @@ import UIKit
 import Alamofire
 
 private enum HomeScreenStrings: String {
-    case homeScreenCell = "HomeScreenCell"
     case listScreenIdentifier = "ListScreenVC"
     case noAlbumAvailable = "No saved albums yet!!"
-    case albumInfoScreenIdentifier = "AlbumInfoScreenVC"
 }
 
 class HomeScreenVC: UIViewController {
     
     private var homeScreenVM: HomeScreenViewModel?
     private var albumInfo: [AlbumInfo]?
+    private static let homeScreenCell = "HomeScreenCell"
     
     @IBOutlet weak var albumCollection: UICollectionView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -34,8 +33,8 @@ class HomeScreenVC: UIViewController {
         super.viewWillAppear(animated)
         
         self.navigationController?.isNavigationBarHidden = true
-        albumInfo = iBDatabaseOperations.getAlbumDetails()
-        albumInfo?.count ?? 0 > 0 ? albumCollection.restore() : albumCollection.setEmptyMessage(HomeScreenStrings.noAlbumAvailable.rawValue)
+
+        homeScreenVM?.getAlbumInfoCount() ?? 0 > 0 ? albumCollection.restore() : albumCollection.setEmptyMessage(HomeScreenStrings.noAlbumAvailable.rawValue)
         albumCollection.reloadData()
     }
     
@@ -58,10 +57,12 @@ class HomeScreenVC: UIViewController {
     
     func updateScreen() {
         
-        let listScreenVC = storyboard?.instantiateViewController(withIdentifier: HomeScreenStrings.listScreenIdentifier.rawValue) as! ListScreenVC
-        listScreenVC.albumDetails = homeScreenVM?.albumDetails.value
-
-        self.navigationController?.pushViewController(listScreenVC, animated: true)
+        if let listScreenVC = storyboard?.instantiateViewController(withIdentifier: HomeScreenStrings.listScreenIdentifier.rawValue) as? ListScreenVC {
+            
+            listScreenVC.albumDetails = homeScreenVM?.albumDetails.value
+            
+            self.navigationController?.pushViewController(listScreenVC, animated: true)
+        }
     }
     
     // MARK: Dismiss Keyboard
@@ -73,13 +74,12 @@ class HomeScreenVC: UIViewController {
     
     @IBAction func deleteAlbumTapped(_ sender: UIButton) {
         
-        if albumInfo?.count ?? 0 > 0, let albumDetails = albumInfo?[sender.tag] {
+        if homeScreenVM?.getAlbumInfoCount() ?? 0 > 0, let albumDetails = homeScreenVM?.getAlbumLInfo(withIndex: sender.tag) {
             
             let detail = AlbumDetail.init(name: albumDetails.albumName, artist: albumDetails.artistName, url: nil, image: nil)
             iBDatabaseOperations.deleteAlbumWith(albumInfo: detail)
             
-            albumInfo = iBDatabaseOperations.getAlbumDetails()
-            albumInfo?.count ?? 0 > 0 ? albumCollection.restore() : albumCollection.setEmptyMessage(HomeScreenStrings.noAlbumAvailable.rawValue)
+            homeScreenVM?.getAlbumInfoCount() ?? 0 > 0 ? albumCollection.restore() : albumCollection.setEmptyMessage(HomeScreenStrings.noAlbumAvailable.rawValue)
             albumCollection.reloadData()
         }
     }
@@ -117,12 +117,12 @@ extension HomeScreenVC: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return albumInfo?.count ?? 0
+        return homeScreenVM?.getAlbumInfoCount() ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeScreenStrings.homeScreenCell.rawValue, for: indexPath) as? HomeScreenCell, let albumDetails = albumInfo?[indexPath.row] else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeScreenVC.homeScreenCell, for: indexPath) as? HomeScreenCell, let albumDetails = homeScreenVM?.getAlbumLInfo(withIndex: indexPath.row) else {
             
             return UICollectionViewCell()
         }
@@ -161,7 +161,7 @@ extension HomeScreenVC: UICollectionViewDataSource, UICollectionViewDelegate {
     @objc func handleTapGesture(gesture : UITapGestureRecognizer) {
         // Preparing data to pass
         
-        guard let albumInfoScreenVC = storyboard?.instantiateViewController(withIdentifier: HomeScreenStrings.albumInfoScreenIdentifier.rawValue) as? AlbumInfoScreenVC, let albumDetail = albumInfo?[gesture.view!.tag] else {
+        guard let albumInfoScreenVC = storyboard?.instantiateViewController(withIdentifier: AlbumInfoScreenVC.identifier) as? AlbumInfoScreenVC, let selectedTag = gesture.view?.tag, let albumDetail = homeScreenVM?.getAlbumLInfo(withIndex: selectedTag) else {
             
             return
         }

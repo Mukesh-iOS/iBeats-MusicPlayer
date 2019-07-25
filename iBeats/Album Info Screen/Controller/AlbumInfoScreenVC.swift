@@ -25,6 +25,8 @@ class AlbumInfoScreenVC: UIViewController {
     var isFromSearch: Bool?
     private var albumInfoVM : AlbumInfoScreenViewModel?
     
+    static let identifier = "AlbumInfoScreenVC"
+    
     @IBOutlet weak var infoTable: UITableView!
     @IBOutlet weak var albumCover: UIImageView!
     @IBOutlet weak var albumName: UILabel!

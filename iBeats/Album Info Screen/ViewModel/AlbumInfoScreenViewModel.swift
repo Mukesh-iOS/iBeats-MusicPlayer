@@ -8,11 +8,6 @@
 
 import UIKit
 
-protocol AlbumInfoScreenNotification: class {
-    
-    func updateScreen()
-}
-
 class AlbumInfoScreenViewModel: NSObject {
     
     var albumInfos: Variable<AlbumInfoModel> = Variable<AlbumInfoModel>()
