@@ -31,4 +31,44 @@ class AlbumInfoScreenViewModel: NSObject {
             }
         }
    }
+    
+    func checkIfAlbumAlreadyInserted(albumInfo: AlbumDetail) -> Bool {
+        
+        return iBDatabaseOperations.checkIfAlreadyInsertedWith(albumInfo: albumInfo)
+    }
+    
+    func deleteAlbum(albumInfo: AlbumDetail) {
+        
+        iBDatabaseOperations.deleteAlbumWith(albumInfo: albumInfo)
+    }
+    
+    func insertAlbumInfoIntoDB(albumInfo: AlbumDetail, isFromSearch: Bool) {
+        
+        let track = albumInfos.value?.album?.tracks?.track
+        iBDatabaseOperations.insertDatasInDBWith(albumInfo: albumInfo, withTracks: track, isFromSearch: isFromSearch)
+    }
+    
+    func getSavedAlbumTrackCount(albumInfo: AlbumDetail) -> Int {
+        
+        let trackFullDetail = iBDatabaseOperations.fetchSingleAlbumWith(albumInfo: albumInfo)
+        return trackFullDetail?.tracks?.count ?? 0
+    }
+    
+    func getAlbumTrackCount() -> Int {
+        
+        return albumInfos.value?.album?.tracks?.track?.count ?? 0
+    }
+    
+    func fetchSingleAlbumInfoFromDB(albumInfo: AlbumDetail, index: Int) -> TrackInfo {
+        
+        let trackFullDetail = iBDatabaseOperations.fetchSingleAlbumWith(albumInfo: albumInfo)
+        let trackInfo = TrackInfo.init(name: trackFullDetail?.tracks?[index], duration: trackFullDetail?.durations?[index])
+        
+        return trackInfo
+    }
+    
+    func fetchSingleAlbumInfo(index: Int) -> TrackInfo? {
+        
+        return albumInfos.value?.album?.tracks?.track?[index]
+    }
 }
