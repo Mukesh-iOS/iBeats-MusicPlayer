@@ -81,8 +81,9 @@ class iBDatabaseOperations: NSObject {
         var tracks = [String]()
         var durations = [String]()
         
-        if withTracks?.count ?? 0  > 0 {
-            for (_, element) in withTracks!.enumerated()
+        if let tracksInfos = withTracks, tracksInfos.count > 0 {
+            
+            for (_, element) in tracksInfos.enumerated()
             {
                 tracks.append(element.name ?? "")
                 durations.append(element.duration ?? "")
@@ -91,7 +92,9 @@ class iBDatabaseOperations: NSObject {
         
         let managedContext = iBDatabaseManager.sharedInstance.managedObjectContext
         
-        let entity = NSEntityDescription.entity(forEntityName: "AlbumInfo", in: managedContext)!
+        guard let entity = NSEntityDescription.entity(forEntityName: "AlbumInfo", in: managedContext) else {
+            return
+        }
         let albumInfos = AlbumInfo(entity: entity, insertInto: managedContext)
         albumInfos.albumName = albumInfo.name
         albumInfos.artistName = albumInfo.artist

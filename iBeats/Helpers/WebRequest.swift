@@ -61,25 +61,27 @@ struct WebServiceRequest {
             }
     }
     
-    func loadQueryParams(_ params : NSMutableDictionary?, toURL url : URL) -> URL {
+    func loadQueryParams(_ params: NSMutableDictionary?, toURL url: URL) -> URL {
         
-        var fullURL = url
-        
-        if  params != nil && (params?.count)! > 0 {
+        if let queryParams = params, queryParams.count > 0 {
             
-            var urlComponents = URLComponents(string: "\(fullURL)")
+            var urlComponents = URLComponents(string: "\(url)")
             
             var queryItems = [URLQueryItem]()
             
-            for (key, value) in params! {
-                let queryItem = URLQueryItem(name: key as! String, value: String(describing: value))
-                queryItems.append(queryItem)
+            for (key, value) in queryParams {
+                
+                if let keyName = key as? String {
+                    let queryItem = URLQueryItem(name: keyName, value: String(describing: value))
+                    queryItems.append(queryItem)
+                }
             }
             
             urlComponents?.queryItems = queryItems
-            fullURL = (urlComponents?.url)!
+            if let completeURL = urlComponents?.url {
+                return completeURL
+            }
         }
-        
-        return fullURL
+        return url
     }
 }

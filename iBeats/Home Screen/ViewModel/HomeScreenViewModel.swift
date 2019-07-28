@@ -20,13 +20,33 @@ class HomeScreenViewModel: NSObject {
         params.setValue("album.search", forKey: "method")
         params.setValue("json", forKey: "format")
 
-        let searchURL = WebServiceRequest().loadQueryParams(params, toURL: URL(string: ServiceURL.baseURL)!)
-        
-        WebServiceRequest.fetchRequest(serviceURL: searchURL, resultStruct: AlbumSearchModel.self) { [weak self] (album) in
-            guard let album = album as? AlbumSearchModel, let strongSelf = self else {
-                return
+        if let serviceURL = URL(string: ServiceURL.baseURL) {
+            
+            let searchURL = WebServiceRequest().loadQueryParams(params, toURL: serviceURL)
+            
+            WebServiceRequest.fetchRequest(serviceURL: searchURL, resultStruct: AlbumSearchModel.self) { [weak self] (album) in
+                guard let album = album as? AlbumSearchModel, let strongSelf = self else {
+                    return
+                }
+                strongSelf.albumDetails.value = album
             }
-            strongSelf.albumDetails.value = album
         }
+    }
+    
+    func getAlbumInfoCount() -> Int {
+        
+        return iBDatabaseOperations.getAlbumDetails()?.count ?? 0
+    }
+    
+    func getAlbumLInfo(withIndex index: Int) -> AlbumInfo? {
+        
+        let albums = iBDatabaseOperations.getAlbumDetails()
+        
+        return albums?[index]
+    }
+    
+    func deleteAlbum(withAlbumDetail album: AlbumDetail) {
+        
+        iBDatabaseOperations.deleteAlbumWith(albumInfo: album)
     }
 }

@@ -15,7 +15,7 @@ enum APIKey: String {
 
 class ServiceURL: NSObject {
     
-     static  let baseURL : String = {
+     static  let baseURL: String = {
         
         return "http://ws.audioscrobbler.com/2.0/"
     }()

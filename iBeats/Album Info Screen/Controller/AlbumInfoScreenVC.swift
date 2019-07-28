@@ -25,6 +25,8 @@ class AlbumInfoScreenVC: UIViewController {
     var isFromSearch: Bool?
     private var albumInfoVM : AlbumInfoScreenViewModel?
     
+    static let identifier = "AlbumInfoScreenVC"
+    
     @IBOutlet weak var infoTable: UITableView!
     @IBOutlet weak var albumCover: UIImageView!
     @IBOutlet weak var albumName: UILabel!
@@ -47,20 +49,30 @@ class AlbumInfoScreenVC: UIViewController {
     
     private func viewSetup() {
 
-        let isAlreadySavedAlbum = iBDatabaseOperations.checkIfAlreadyInsertedWith(albumInfo: albumDetail!)
+        albumInfoVM = AlbumInfoScreenViewModel()
         
-        rightBarBtn.image = isAlreadySavedAlbum ?  UIImage(named: "Delete") : UIImage(named: "Download")
+        guard let albumDetails = albumDetail, let albumInfoVM = albumInfoVM else {
+            
+            return
+        }
+        
+        albumInfoVM.albumInfos.notify(notifier: { [weak self] (info) in
+            
+            self?.updateScreen()
+        })
+        
+        let isAlreadySavedAlbum = albumInfoVM.checkIfAlbumAlreadyInserted(albumInfo: albumDetails)
+        
+        rightBarBtn.image = isAlreadySavedAlbum ? UIImage(named: "Delete") : UIImage(named: "Download")
         
         albumCover.image = UIImage(named: "PlaceholderImage")
 
-        let imageURL = (isFromSearch! ? albumDetail?.image?[2].image : albumDetail?.image?[0].image) ?? nil
-        
-        if let coverImgURL = imageURL {
+        if let isFromSearchType = isFromSearch, let imageURL = (isFromSearchType ? albumDetail?.image?[2].image : albumDetail?.image?[0].image) {
             
             // Download image in background
             DispatchQueue.global(qos: .background).async {
                 
-                Alamofire.request(coverImgURL).responseImage { [weak self] response in
+                Alamofire.request(imageURL).responseImage { [weak self] response in
                     
                     if let image = response.result.value, let strongSelf = self {
                         // Update image in main thread
@@ -75,18 +87,11 @@ class AlbumInfoScreenVC: UIViewController {
         albumName.text = "Album Name: \(albumDetail?.name ?? "")"
         artistName.text = "Artist Name: \(albumDetail?.artist ?? "")"
         
-        albumInfoVM = AlbumInfoScreenViewModel()
-        
-        albumInfoVM?.albumInfos.notify(notifier: { [weak self] (info) in
-            
-            self?.updateScreen()
-        })
-        
         // Search tracks for the album
         if isAlreadySavedAlbum {
             updateScreen()
         } else {
-            albumInfoVM?.searchAlbumInfo(album: albumDetail?.name ?? "", artist: albumDetail?.artist ?? "")
+            albumInfoVM.searchAlbumInfo(album: albumDetail?.name ?? "", artist: albumDetail?.artist ?? "")
         }
     }
     
@@ -106,13 +111,22 @@ class AlbumInfoScreenVC: UIViewController {
         
         rightBarBtn.image = rightBarBtn.image == UIImage(named: "Delete") ?  UIImage(named: "Download") : UIImage(named: "Delete")
         
+        guard let albumDetails = albumDetail else {
+            
+            return
+        }
+        
         if (rightBarBtn.image == UIImage(named: "Download")) {
             
-            iBDatabaseOperations.deleteAlbumWith(albumInfo: albumDetail!)
-        }
-        else {
-            let track = albumInfoVM?.albumInfos.value?.album?.tracks?.track
-            iBDatabaseOperations.insertDatasInDBWith(albumInfo: albumDetail!, withTracks: track, isFromSearch: isFromSearch!)
+            albumInfoVM?.deleteAlbum(albumInfo: albumDetails)
+        } else {
+            
+            guard let isFromSearchType = isFromSearch else {
+                
+                return
+            }
+            
+            albumInfoVM?.insertAlbumInfoIntoDB(albumInfo: albumDetails, isFromSearch: isFromSearchType)
         }
     }
 }
@@ -123,18 +137,16 @@ extension AlbumInfoScreenVC: UITableViewDelegate, UITableViewDataSource {
     
     private func calculateTrackCount() -> Int{
         
-        var trackCount: Int?
-        let isAlreadySavedAlbum = iBDatabaseOperations.checkIfAlreadyInsertedWith(albumInfo: albumDetail!)
-        
-        if isAlreadySavedAlbum{
+        guard let albumDetails = albumDetail, let albumInfoVM = albumInfoVM else {
             
-            let trackFullDetail = iBDatabaseOperations.fetchSingleAlbumWith(albumInfo: albumDetail!)
-            trackCount = trackFullDetail?.tracks?.count ?? 0
-        } else {
-            trackCount = albumInfoVM?.albumInfos.value?.album?.tracks?.track?.count ?? 0
+            return 0
         }
+        
+        let isAlreadySavedAlbum = albumInfoVM.checkIfAlbumAlreadyInserted(albumInfo: albumDetails)
+        
+        let trackCount = isAlreadySavedAlbum ? albumInfoVM.getSavedAlbumTrackCount(albumInfo: albumDetails) : albumInfoVM.getAlbumTrackCount()
 
-        return trackCount!
+        return trackCount
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -149,23 +161,24 @@ extension AlbumInfoScreenVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: AlbumInfoScreenStrings.albumInfoCell.rawValue) as? AlbumInfoCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: AlbumInfoScreenStrings.albumInfoCell.rawValue) as? AlbumInfoCell, let albumDetail = albumDetail, let albumInfoVM = albumInfoVM else {
             
             return UITableViewCell()
         }
         
-        let isAlreadySavedAlbum = iBDatabaseOperations.checkIfAlreadyInsertedWith(albumInfo: albumDetail!)
+        let isAlreadySavedAlbum = albumInfoVM.checkIfAlbumAlreadyInserted(albumInfo: albumDetail)
+        
         if isAlreadySavedAlbum {
             
-            let trackFullDetail = iBDatabaseOperations.fetchSingleAlbumWith(albumInfo: albumDetail!)
-            let trackInfo = TrackInfo.init(name: trackFullDetail?.tracks?[indexPath.row], duration: trackFullDetail?.durations?[indexPath.row])
+            let trackInfo = albumInfoVM.fetchSingleAlbumInfoFromDB(albumInfo: albumDetail, index: indexPath.row)
             cell.loadData(trackInfo: trackInfo)
         }
         else {
-            let trackInfo = albumInfoVM?.albumInfos.value?.album?.tracks?.track?[indexPath.row]
-            cell.loadData(trackInfo: trackInfo!)
+            if let trackInfo = albumInfoVM.fetchSingleAlbumInfo(index: indexPath.row) {
+               
+                cell.loadData(trackInfo: trackInfo)
+            }
         }
-        
         return cell
     }
     
